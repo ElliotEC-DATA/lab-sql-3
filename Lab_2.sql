@@ -9,15 +9,13 @@ where(rating = 'PG-13');
 
 select * from film;
 
--- I can't find the duration of the movies in the sakila base, I'm going to base my top 10 on rate_duration even - 
--- - though it might be not the answer you are looking for, process will be the same
-
-select rental_duration, title from film
+select title,length(length) as duration from film
 where (release_year = '2006')
-order by rental_duration desc
+order by length desc
 limit 10;
 
-SELECT DATEDIFF((SELECT MIN(last_update) FROM film), (SELECT MAX(last_update) FROM rental)); 
+
+SELECT DATEDIFF(MAX(rental_date), MIN(rental_date)) FROM rental; 
 
 select * from rental;
 
@@ -33,6 +31,14 @@ else 'Week day'
 end as 'day_type'
 from rental;
 
+SELECT rental_date, DAYNAME(rental_date),
+CASE DAYNAME(rental_date)
+WHEN 'Saturday' THEN 'Weekend' 
+WHEN 'Sunday' THEN 'Weekend'
+ELSE 'Weekday'
+END AS 'day_type'
+FROM sakila.rental;
+
 -- This is question 8 below
 
 select count(rental_date)
@@ -43,6 +49,8 @@ from rental;
 
 select rental_date, date_format(convert(last_update,date), '%M') as Months from rental;
 
--- Answer is below
+-- Answer is below (the code upper was just a try anyway)
 
-select count(date_format(convert(last_update,date), '%M') = 'October') from rental;
+select max(rental_date) - interval 1 month from rental;
+
+select count(rental_id) from rental where rental_date > '2006-01-14';
